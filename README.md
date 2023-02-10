@@ -29,10 +29,11 @@ Welcome to BingeBuddy, the app that lets you keep track of your favorite TV show
 # ERD
 ![erd](./img/ERD.png)
 # RESTful Routing
-![RESTful] (add finished restful chart here)
+![RESTful](./img/RESTful.png)
 # Wireframing
-![add wireframe(s) here]
-![and here]
+![wireframe1](./img/wireframe1.png)
+![wireframe2](./img/wireframe2.png)
+
 # MVP Goals
 ### The MVP for BingeBuddy is: 
 - Allow users to create accounts, and allow them to be personally customizable..
