@@ -27,7 +27,7 @@ Welcome to BingeBuddy, the app that lets you keep track of your favorite TV show
     - Heroku CLI
 
 # ERD
-![ERD] (add finished ERD here)
+![erd](./img/ERD.png)
 # RESTful Routing
 ![RESTful] (add finished restful chart here)
 # Wireframing

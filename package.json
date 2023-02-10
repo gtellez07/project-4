@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "postgres": "^3.3.3"
-  }
-}
