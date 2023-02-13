@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Show
+
+
+@admin.register(Show)
+class ShowAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'genre', 'description', 'review')
