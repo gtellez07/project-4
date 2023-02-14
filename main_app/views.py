@@ -2,6 +2,18 @@ import requests
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views import View
+from rest_framework.generics import ListAPIView
+from rest_framework import serializers
+from .models import Show
+
+class ShowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Show
+        fields = '__all__'
+
+class ShowListView(ListAPIView):
+    queryset = Show.objects.all()
+    serializer_class = ShowSerializer
 
 class ShowList(View):
     def get(self, request, *args, **kwargs):
