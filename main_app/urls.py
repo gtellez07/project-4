@@ -12,7 +12,7 @@ urlpatterns = [
     path('api/shows/<int:tv_id>/', views.show_details),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('shows/', views.ShowListView.as_view(), name='show_list'),
-    path('show/create/', ShowCreateView.as_view(), name='show_create'),
-    path('show/<int:tv_pk>/update/', ShowUpdateView.as_view(), name='show_update'),
-    path('show/<int:tv_pk>/delete/', ShowDeleteView.as_view(), name='show_delete'),
+    path('shows/create/', ShowCreateView.as_view(), name='show_create'),
+    path('shows/<int:tv_pk>/update/', ShowUpdateView.as_view(), name='show_update'),
+    path('shows/<int:tv_pk>/delete/', ShowDeleteView.as_view(), name='show_delete'),
 ]
