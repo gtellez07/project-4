@@ -1,0 +1,45 @@
+{% for show in data %}
+<h2>{{ show.name }}</h2>
+<p>{{ show.overview }}</p>
+{% comment %} Start Form
+add or remove Binge (ab or rb)
+{% endcomment %}
+<form action="{% url 'show_create' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="show_id" value="{{show.id}}">
+    <input type="hidden" name="title" value="{{show.title}}">
+    <input type="hidden" name="description" value="{{show.description}}">
+    <input type="hidden" name="genre" value="{{show.genre}}">
+    <input type="hidden" name="type" value="ab">
+  
+    <button type="submit">Add To Binge List</button>
+  </form>
+
+<form action="{% url 'show_create' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="show_id" value="{{show.id}}">
+    <input type="hidden" name="title" value="{{show.title}}">
+    <input type="hidden" name="description" value="{{show.description}}">
+    <input type="hidden" name="genre" value="{{show.genre}}">
+    <input type="hidden" name="type" value="{{show.title}}">
+  
+    <button type="submit">Add To Favorites</button>
+  </form>
+  
+<form action="{% url 'show_create' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="show_id" value="{{show.id}}">
+    <input type="hidden" name="title" value="{{show.title}}">
+    <input type="hidden" name="description" value="{{show.description}}">
+    <input type="hidden" name="genre" value="{{show.genre}}">
+    <input type="hidden" name="type" value="{{show.title}}">
+    {% comment %}   
+    add dropdown input select to choose rating  
+    {% endcomment %}
+    <button type="submit">Rate Series</button>
+  </form>
+  
+{% endfor %}
+
+
+
