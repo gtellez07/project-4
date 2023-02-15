@@ -6,9 +6,13 @@ from main_app.forms import ShowForm
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework import serializers
 from .models import Show, Series
+from pprint import pprint
+
+api_key = '3d62d502968b0ef09de0fdbdfd9d6795'
+
 
 def home(request):
-    return HttpResponse('Home Page')
+    return render(request, 'home.html')
 
 def show_create(request):
     if request.method == 'POST':
@@ -96,35 +100,30 @@ class ShowDeleteView(View):
         show.delete()
         return redirect('home')
 
-# class ShowSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Show
-#         fields = '__all__'
-
-# class ShowListView(ListAPIView):
-#     queryset = Show.objects.all()
-#     serializer_class = ShowSerializer
+# class ShowList(View):
+#     def get(self, request, *args, **kwargs):
+#         url = f'https://api.themoviedb.org/3/tv/popular?api_key={api_key}&language=en-US&page=1'
+#         response = requests.get(url)
+#         data = response.json()
+#         print("hello test 🎥 🎬 🍿 🎭")
+#         pprint(data)
+#         context = {'data': data['results']}
+#         return render(request, 'shows_list.html', context)
 
 class ShowList(View):
     def get(self, request, *args, **kwargs):
-        url = 'https://api.themoviedb.org/3/tv/popular?api_key=3d62d502968b0ef09de0fdbdfd9d6795&language=en-US&page=1'
+        url = f'https://api.themoviedb.org/3/tv/popular?api_key={api_key}&language=en-US&page=1'
         response = requests.get(url)
+        image_base_url = 'https://image.tmdb.org/t/p/w500'
         data = response.json()
-        print("hello test")
-        print(data['results'])
-        context = {'data': data['results']}
+        context = {'data': [{'name': item['name'], 'overview': item['overview'], 'poster': image_base_url + item['poster_path'], 'date': item['first_air_date']} for item in data['results']]}
+        pprint(data)
+        pprint(context)
         return render(request, 'shows_list.html', context)
 
-    # def show_details(request, tv_id):
-    #     api_key = '3d62d502968b0ef09de0fdbdfd9d6795'
-    #     url = f'https://api.themoviedb.org/3/tv/{tv_id}?api_key={api_key}d&language=en-US'
 
-    #     response = requests.get(url.format(tv_id=tv_id, api_key=api_key))
-    #     data = response.json()
 
-    #     context = {'data': data}
-    #     return render(request, 'show_details.html', context)
 
-    # def show_form(request):
-    #     form = ShowForm()
-    #     return render(request, 'show_form.html', {'form': form})
+
+
+

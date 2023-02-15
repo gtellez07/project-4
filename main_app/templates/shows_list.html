@@ -1,6 +1,10 @@
 {% for show in data %}
 <h2>{{ show.name }}</h2>
 <p>{{ show.overview }}</p>
+{% if show.poster %}
+<img src="https://image.tmdb.org/t/p/w500{{ show.poster }}" alt="{{ show.name }} Poster">
+{% endif %}
+
 {% comment %} Start Form
 add or remove Binge (ab or rb)
 {% endcomment %}
@@ -38,7 +42,7 @@ add or remove Binge (ab or rb)
     {% endcomment %}
     <button type="submit">Rate Series</button>
   </form>
-  
+
 {% endfor %}
 
 
