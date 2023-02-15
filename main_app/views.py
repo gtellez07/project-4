@@ -1,14 +1,32 @@
 import requests
 from django.shortcuts import render, redirect
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth import login, logout
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 from main_app.forms import ShowForm
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework import serializers
 from .models import Show, Series
+from .forms import CreateUserForm
 from pprint import pprint
 
 api_key = '3d62d502968b0ef09de0fdbdfd9d6795'
+
+def register(request):
+    form = CreateUserForm()
+
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            
+    context = {'form': form}
+    return render(request, 'register.html', context)
+
+def login_view(request):
+    context = {}
+    return render(request, 'login.html', context)
 
 
 def home(request):
@@ -116,7 +134,7 @@ class ShowList(View):
         response = requests.get(url)
         image_base_url = 'https://image.tmdb.org/t/p/w500'
         data = response.json()
-        context = {'data': [{'name': item['name'], 'overview': item['overview'], 'poster': image_base_url + item['poster_path'], 'date': item['first_air_date']} for item in data['results']]}
+        context = {'data': [{'name': item['name'], 'overview': item['overview'], 'vote_average': item['vote_average'], 'poster': image_base_url + item['poster_path'], 'date': item['first_air_date']} for item in data['results']]}
         pprint(data)
         pprint(context)
         return render(request, 'shows_list.html', context)

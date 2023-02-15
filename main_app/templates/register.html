@@ -1,0 +1,32 @@
+<h3>Register</h3>
+
+<form method='POST' action=''>
+    {% csrf_token %}
+    {{form.username.label}}
+    {{form.username}}
+    {% for error in form.username.errors %}
+        <span style='color:red'>{{error}}</span>
+    {% endfor %}
+
+    {{form.email.label}}
+    {{form.email}}
+    {% for error in form.email.errors %}
+        <span style='color:red'>{{error}}</span>
+    {% endfor %}
+
+    {{form.password1.label}}
+    {{form.password1}}
+    {% for error in form.password1.errors %}
+        <span style='color:red'>{{error}}</span>
+    {% endfor %}
+
+    {{form.password2.label}}
+    {{form.password2}}
+    {% for error in form.password2.errors %}
+        <span style='color:red'>{{error}}</span>
+
+
+    {% endfor %}
+
+    <input type='submit' value='Create User' />
+</form>
