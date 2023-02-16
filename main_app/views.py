@@ -1,5 +1,7 @@
 from pyexpat.errors import messages
 import requests
+from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.views import LogoutView
@@ -15,16 +17,28 @@ from pprint import pprint
 
 api_key = '3d62d502968b0ef09de0fdbdfd9d6795'
 
+@csrf_exempt
 def register(request):
-    form = CreateUserForm()
+    form = CreateUserForm(request.POST)
     if form.is_valid():
         form.save()
         user = form.cleaned_data.get('username')
         messages.success(request, 'Account was created for ' + user)
-        return redirect('login')
+        return redirect('home')
+    else:
+        context = {'form': form}
+        return render(request, 'register.html', context)
+
+    ###### Original code that was not completing Registration form ######
+    # form = CreateUserForm()
+    # if form.is_valid():
+    #     form.save()
+    #     user = form.cleaned_data.get('username')
+    #     messages.success(request, 'Account was created for ' + user)
+    #     return redirect('login')
             
-    context = {'form': form}
-    return render(request, 'register.html', context)
+    # context = {'form': form}
+    # return render(request, 'register.html', context)
 
 def signout(request):
     logout(request)
