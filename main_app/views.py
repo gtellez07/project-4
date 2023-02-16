@@ -17,6 +17,7 @@ from pprint import pprint
 
 api_key = '3d62d502968b0ef09de0fdbdfd9d6795'
 
+### Registration form for new users to create an account
 @csrf_exempt
 def register(request):
     form = CreateUserForm(request.POST)
@@ -29,21 +30,12 @@ def register(request):
         context = {'form': form}
         return render(request, 'register.html', context)
 
-    ###### Original code that was not completing Registration form ######
-    # form = CreateUserForm()
-    # if form.is_valid():
-    #     form.save()
-    #     user = form.cleaned_data.get('username')
-    #     messages.success(request, 'Account was created for ' + user)
-    #     return redirect('login')
-            
-    # context = {'form': form}
-    # return render(request, 'register.html', context)
-
+### Sign out function for users to sign out of their account and return to the login page
 def signout(request):
     logout(request)
     return redirect('login')
-
+    
+### Login form for users to login to their account
 class LoginView(View):
     def get(self, request, *args, **kwargs):
         form = LoginUserForm()
@@ -66,11 +58,12 @@ class LoginView(View):
         else:
             return render(request, 'login.html', context)
             
-
+### Home page for users to view their profile and list of shows
 def home(request):
     print("home")
     return render(request, 'home.html')
 
+### I DONT THINK I NEED THIS...???🤔🤔🤔🤔
 def show_create(request):
     if request.method == 'POST':
         form = ShowForm(request.POST)
@@ -81,6 +74,7 @@ def show_create(request):
         form = ShowForm()
     return render(request, 'show_create.html', {'form': form})
 
+### DO I NEED THE GET HERE??🤔🤔🤔🤔 its creating a return to the show_create.html, and i dont think that template is relevant
 class ShowCreateView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'show_create.html')
@@ -126,7 +120,8 @@ class ShowCreateView(View):
             )
 
         return redirect('home')
-
+ 
+#### DO I NEED THE GET HERE??🤔🤔🤔🤔 its creating a return to the show_update.html, i dont think that template is relevant
 class ShowUpdateView(View):
     def get(self, request, *args, **kwargs):
         tv_id = kwargs.get('tv_pk')
@@ -145,6 +140,7 @@ class ShowUpdateView(View):
 
         return redirect('show_details', tv_id=show.tv_id)
 
+### DO I NEED THE GET...???🤔🤔🤔🤔 it is returning to the show_delete.html, and that template doesnt exist
 class ShowDeleteView(View):
     def get(self, request, *args, **kwargs):
         tv_id = kwargs.get('tv_id')
@@ -156,16 +152,6 @@ class ShowDeleteView(View):
         show = Show.objects.get(tv_id=tv_id)
         show.delete()
         return redirect('home')
-
-# class ShowList(View):
-#     def get(self, request, *args, **kwargs):
-#         url = f'https://api.themoviedb.org/3/tv/popular?api_key={api_key}&language=en-US&page=1'
-#         response = requests.get(url)
-#         data = response.json()
-#         print("hello test 🎥 🎬 🍿 🎭")
-#         pprint(data)
-#         context = {'data': data['results']}
-#         return render(request, 'shows_list.html', context)
 
 class ShowList(View):
     def get(self, request, *args, **kwargs):

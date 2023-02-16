@@ -8,16 +8,14 @@ router = routers.DefaultRouter()
 
 urlpatterns = [
     path('profile/', views.home, name='home'),
-    path('api/', include(router.urls)),
+    path('api/', include(router.urls)), #I DONT THINK I NEED THIS LINE?🤔🤔🤔🤔
     path('register/', register, name='register'),
     path('signout/', signout, name='signout'),
     path('login/', LoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
-    path('shows/create/', ShowCreateView.as_view(), name='show_create'),
+    path('logout/', LogoutView.as_view(), name='logout'), #THIS LOGS OUT SUPERUSER, DO I NEED THIS?🤔🤔🤔🤔
+    path('shows/create/', ShowCreateView.as_view(), name='show_create'), #I DONT THINK I NEED THIS LINE?🤔🤔🤔🤔
     path('', ShowList.as_view(), name='show_list'),
-    # path('api/shows/<int:tv_id>/', views.show_details),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    # path('shows/', views.ShowListView.as_view(), name='show_list'),
-    path('shows/<int:tv_pk>/update/', ShowUpdateView.as_view(), name='show_update'),
-    path('shows/<int:tv_pk>/delete/', ShowDeleteView.as_view(), name='show_delete'),
+    path('shows/<int:tv_pk>/update/', ShowUpdateView.as_view(), name='show_update'),#IDK WHAT THIS PATH LEADS TO..? 🤔🤔🤔🤔 
+    path('shows/<int:tv_pk>/delete/', ShowDeleteView.as_view(), name='show_delete'), #IDK WHAT THIS PATH LEADS TO..? 🤔🤔🤔🤔
 ]
