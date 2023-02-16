@@ -33,7 +33,8 @@ class Series(models.Model):
         FOUR = 4
         FIVE = 5
     review = models.IntegerField(choices=Rating.choices)
-
+    series = models.Manager()
     def __str__(self):
         return self.title,
+
 

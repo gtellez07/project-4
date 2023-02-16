@@ -1,35 +1,60 @@
+from pyexpat.errors import messages
 import requests
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth import login, logout
+from django.contrib.auth.views import LogoutView
+from django.contrib.auth import login, logout, authenticate
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 from main_app.forms import ShowForm
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework import serializers
 from .models import Show, Series
-from .forms import CreateUserForm
+from .forms import CreateUserForm, LoginUserForm
 from pprint import pprint
 
 api_key = '3d62d502968b0ef09de0fdbdfd9d6795'
 
 def register(request):
     form = CreateUserForm()
-
-    if request.method == 'POST':
-        form = CreateUserForm(request.POST)
-        if form.is_valid():
-            form.save()
+    if form.is_valid():
+        form.save()
+        user = form.cleaned_data.get('username')
+        messages.success(request, 'Account was created for ' + user)
+        return redirect('login')
             
     context = {'form': form}
     return render(request, 'register.html', context)
 
-def login_view(request):
-    context = {}
-    return render(request, 'login.html', context)
+def signout(request):
+    logout(request)
+    return redirect('login')
 
+class LoginView(View):
+    def get(self, request, *args, **kwargs):
+        form = LoginUserForm()
+        context = {'form' : form}
+        return render(request, 'login.html', context)
+
+    def post(self, request, *args, **kwargs):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        form = LoginUserForm()
+        context = {'form' : form}
+
+        user = authenticate(username=username, password=password)
+        print("user")
+        print(user)
+        
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            return render(request, 'login.html', context)
+            
 
 def home(request):
+    print("home")
     return render(request, 'home.html')
 
 def show_create(request):
@@ -70,14 +95,14 @@ class ShowCreateView(View):
             favorite = 0
 
         if exists:
-            series = Series.objects.get(show_id = show_id)
+            series = Series.series.get(show_id = show_id)
             series.watched = watched
             series.favorite = favorite
             series.save()
         else:        
-            series = Series.objects.create(
+            series = Series.series.create(
                 show_id = show_id,
-                user_id = 1,
+                user_id = request.user.id,
                 review = 0,
                 title=title,
                 genre=genre,
@@ -86,7 +111,7 @@ class ShowCreateView(View):
                 favorite = favorite
             )
 
-        return redirect('show_details', tv_id=show_id)
+        return redirect('home')
 
 class ShowUpdateView(View):
     def get(self, request, *args, **kwargs):
@@ -134,9 +159,46 @@ class ShowList(View):
         response = requests.get(url)
         image_base_url = 'https://image.tmdb.org/t/p/w500'
         data = response.json()
-        context = {'data': [{'name': item['name'], 'overview': item['overview'], 'vote_average': item['vote_average'], 'poster': image_base_url + item['poster_path'], 'date': item['first_air_date']} for item in data['results']]}
-        pprint(data)
-        pprint(context)
+        
+        # pprint(data)
+        # pprint(context)
+        fids = []
+        new_data = []
+        wids = []
+        if request.user.is_authenticated:
+            # get all favorite shows
+            f = Series.series.filter(user_id=request.user.id, favorite=True)
+            ff = f.all()
+            for x in ff:
+                fids.append(x.show_id)
+
+            # get all watched shows
+            w = Series.series.filter(user_id=request.user.id, watched=True)
+            ww = w.all()
+            for x in ww:
+                wids.append(x.show_id)
+
+
+        print("fids")
+        print(fids)
+        for item in data['results']:
+            if item['id'] in wids:
+                is_watched = 1
+                print(item["name"])
+            else:
+                is_watched = 0
+
+            if item['id'] in fids:
+                is_fave = 1
+                print(item["name"])
+            else:
+                is_fave = 0
+
+            dd = {'title': item['name'], 'is_fave': is_fave, 'is_watched': is_watched, 'id': item['id'], 'description': item['overview'], 'vote_average': item['vote_average'], 'poster': image_base_url + item['poster_path'], 'date': item['first_air_date']}
+            new_data.append(dd)
+
+
+        context = {'fids': fids, 'data': new_data}
         return render(request, 'shows_list.html', context)
 
 
