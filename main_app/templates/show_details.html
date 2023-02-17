@@ -20,6 +20,7 @@
                   <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="#">Home</a>
                   </li>
+                  {% comment %} created if statement to check if user is logged in, else give the Login option {% endcomment %}
                   {% if request.user.is_authenticated == True %}
                   <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="#">My Series</a>

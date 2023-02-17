@@ -38,14 +38,14 @@ def signout(request):
 
 
 
-def ajax_post_view(request):
-    data_from_post = json.load(request)['post_data'] #Get data from POST request
-    #Do something with the data from the POST request
-    #If sending data back to the view, create the data dictionary
-    data = {
-        'my_data':data_to_display,
-    }
-    return JsonResponse(data)
+# def ajax_post_view(request):
+#     data_from_post = json.load(request)['post_data'] #Get data from POST request
+#     #Do something with the data from the POST request
+#     #If sending data back to the view, create the data dictionary
+#     data = {
+#         'my_data':data_to_display,
+#     }
+#     return JsonResponse(data)
 
     
 ### Login form for users to login to their account
@@ -76,16 +76,6 @@ def home(request):
     print("home")
     return render(request, 'home.html')
 
-### I DONT THINK I NEED THIS...???🤔🤔🤔🤔
-# def show_create(request):
-#     if request.method == 'POST':
-#         form = ShowForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('show_list')
-#     else:
-#         form = ShowForm()
-#     return render(request, 'show_create.html', {'form': form})
 
 class ShowCreateView(View):
     def get(self, request, *args, **kwargs):
@@ -106,7 +96,7 @@ class ShowCreateView(View):
         print(sid)
 
         if sid == 0:
-            # create new record
+            # create new record in Series
             obj = Series.series.create(
                 show_id = show_id,
                 user_id = request.user.id,
@@ -202,7 +192,6 @@ class ShowDetailView(View):
 
         return redirect('show_details', tv_id=show.tv_id)
 
-### DO I NEED THE GET...???🤔🤔🤔🤔 it is returning to the show_delete.html, and that template doesnt exist
 class ShowDeleteView(View):
     def get(self, request, *args, **kwargs):
         tv_id = kwargs.get('tv_id')
