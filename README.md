@@ -11,6 +11,27 @@ Welcome to BingeBuddy, the app that lets you keep track of your favorite TV show
 - As a User, I want to be able to delete a TV show from my list, so that I can remove shows that I am no longer interested in
 - As a User, I want to be able to search for a specific TV show on my list
 
+# Installation Instructions 
+- Create a directory for the project and move into that directory
+- Python: Django is written in Python, so you'll need to have Python installed on your system. To check that python3 is installed and updated, in the command line type in: python3 --version
+- Create a virtual environment by typing in the command line: python3 -m venv .env --(or whatever name you'd like to give it. Does not have to be '.env')
+- Activate virtual environment, in the terminal type in the following: source .env/bin/activate
+- You can install Django using pip, which is a package installer for Python. Open a command prompt or terminal and run the following command:  pip3 install django
+- Make sure Django is installed by typing in the command line: pip3 list
+- We will be using PostgresSQL as the database. In the terminal make sure to run: pip3 install psycopg2
+- Now we'll save the installed packages as a list of dependencies in a text file, in the terminal type in: pip3 install -r requirements.txt
+- Use the "django-admin" command to generate some of the project: django-admin startproject show_collector_project .  <--do not forget the period at the end
+- Create a different app, this is where we will implement tha main functionality of collecting tv-shows and movies:  python3 manage.py startapp main_app
+- Go to settings.py file and under 'INSTALLED_APPS' make sure to include the app: 'main_app',
+- To run the Django development server use the following command: python manage.py runserver
+- Visit localhost:8000 and you should see the Django rocket
+- Enter the psql shell. In the command line enter: psql
+- Create a sql database:  CREATE DATABASE bingebuddy
+- Set the configuration in "settings.py" so the engine is postgresql and the name matches what's in DATABASES, type it under default as the following: 'NAME': 'bingebuddy',
+- in that same location under 'ENGINE' instead of SQLite, make sure to change it to postgresql, that line should look like the following: 'ENGINE': 'django.db.backends.postgresql',
+- next in the command line  type in: python3 manage.py migrate
+- Run the server again to confirm the warning message is gone: python3 manage.py runserver
+
 # Techstack
 - Python
     - JavaScript
