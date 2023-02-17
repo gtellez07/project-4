@@ -1,132 +1,181 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Binge Buddy</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-  </head>
-  <body>
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <nav class="navbar navbar-expand-lg bg-light">
-            <div class="container-fluid">
-              <a class="navbar-brand" href="/">Binge Buddy</a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse float-end" id="navbarNavDropdown">
-                <ul class="navbar-nav">
-                  {% comment %} <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                  </li> {% endcomment %}
-                  {% if request.user.is_authenticated == True %}
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">My Series</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Account</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/signout">Logout</a>
-                  </li>
-                  {% else %}
-                  <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
-                  </li>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Binge Buddy</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  {% load static %}
+  <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Cardo:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  {% load static %}
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+  <script src = "https://ajax.googleapis.com/ajax/libs/jQuery/3.3.1/jQuery.min.js">
+  </script>
+
+  <!-- =======================================================
+  * Template Name: PhotoFolio - v1.2.0
+  * Template URL: https://bootstrapmade.com/photofolio-bootstrap-photography-website-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+
+      <a href="/" class="logo d-flex align-items-center  me-auto me-lg-0">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <i class="bi bi-film ml-4"></i>
+        <h1>Binge Buddy</h1>
+      </a>
+
+
+
+      <div class="header-social-links">
+        <nav id="navbar" class="navbar">
+          <ul>
+            {% if request.user.is_authenticated == True %}
+            <li class="dropdown"><a href="#"><span>Profile</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
+              <ul>
+                <li><a href="/profile">My Series</a></li>
+                <li><a href="gallery.html">Account</a></li>
+                <li><a href="/signout">Logout</a></li>
+              </ul>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="/login">Login</a>
+            </li>
+            
+            {% endif %}
+
+          </ul>
+        </nav><!-- .navbar -->
+      </div>
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+    </div>
+  </header><!-- End Header -->
+
+  <main id="main" data-aos="fade" data-aos-delay="500">
+
+    <!-- ======= Gallery Section ======= -->
+    <section id="gallery" class="gallery">
+      <div class="container-fluid">
+
+        <div class="row gy-4 justify-content-center">
+          {% for show in data %}
+          <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="gallery-item h-100">
+              <img src="https://image.tmdb.org/t/p/w500{{ show.poster }}" alt="{{ show.name }} Poster">
+              <div class="gallery-links d-flex align-items-center justify-content-center">
+                <form action="{% url 'show_create' %}" method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="show_id" value="{{show.id}}">
+                  <input type="hidden" name="title" value="{{show.title}}">
+                  <input type="hidden" name="description" value="{{show.description}}">
+                  <input type="hidden" name="genre" value="{{show.genre}}">
+                  <input type="hidden" name="favorite" value="{{show.is_fave}}">
+                  {% if show.is_watched == 1 %}
+                  <input type="hidden" name="watched" value="0">
                   
+                  <button type="submit" class="btn btn-info m-4 btn-lg"><i class="bi bi-plus-circle-fill"></i></button>
+                  {% else %}
+                  <input type="hidden" name="watched" value="1">
+                  
+                  <button type="submit" class="btn btn-light m-4 btn-lg"><i class="bi bi-plus-circle"></i></button>
                   {% endif %}
-                </ul>
+                </form>
+                <form action="{% url 'show_create' %}" method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="show_id" value="{{show.id}}">
+                  <input type="hidden" name="title" value="{{show.title}}">
+                  <input type="hidden" name="description" value="{{show.description}}">
+                  <input type="hidden" name="genre" value="{{show.genre}}">
+                  <input type="hidden" name="watched" value="{{show.is_watched}}">
+                  {% if show.is_fave == 1 %}
+                  <input type="hidden" name="favorite" value="0">
+                  
+                  <button type="submit" class="btn btn-warning m-4 btn-lg"><i class="bi bi-star-fill"></i></button>
+                  {% else %}
+                  <input type="hidden" name="favorite" value="1">
+                  
+                  <button type="submit" class="btn btn-light m-4 btn-lg"><i class="bi bi-star"></i></button>
+                  {% endif %}
+                </form>
+                {% comment %} <a href="https://image.tmdb.org/t/p/w500{{ show.poster }}" title="{{ show.name }}" class="glightbox preview-link"><i class="bi bi-arrows-angle-expand"></i></a>
+                <a href="gallery-single.html" class="details-link"><i class="bi bi-link-45deg"></i></a> {% endcomment %}
               </div>
             </div>
-          </nav>
-        </div>
-      </div>
-    </div>
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <h1>Find your next binge-worthy series</h1>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <form action="" method="get">
-            <div class="form-group">
-              <label for="search">Search</label>
-              <input type="text" class="form-control" id="search" name="search" placeholder="Search for a series">
-            </div>
-            <button type="submit" class="btn btn-primary">Search</button>
-          </form>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <hr/>
-          {% for show in data %}
-          <h2>{{ show.name }}</h2>
-          <p>{{ show.overview }}</p>
-          <p>Vote Average: {{ show.is_fave }}</p>
-          {% if show.poster %}
-          <img src="https://image.tmdb.org/t/p/w500{{ show.poster }}" alt="{{ show.name }} Poster">
-          {% endif %}
-          <div class="row pt-3">
-            <div class="col-2">
-              <form action="{% url 'show_create' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="show_id" value="{{show.id}}">
-                <input type="hidden" name="title" value="{{show.title}}">
-                <input type="hidden" name="description" value="{{show.description}}">
-                <input type="hidden" name="genre" value="{{show.genre}}">
-                <input type="hidden" name="type" value="ab">
-                <button type="submit" class="btn btn-light">Add To Binge List</button>
-              </form>
-            </div>
-            <div class="col-2">
-              <form action="{% url 'show_create' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="show_id" value="{{show.id}}">
-                <input type="hidden" name="title" value="{{show.title}}">
-                <input type="hidden" name="description" value="{{show.description}}">
-                <input type="hidden" name="genre" value="{{show.genre}}">
-                {% if show.is_fave == 1 %}
-                <input type="hidden" name="type" value="rf">
-                
-                <button type="submit" class="btn btn-light">Remove Favorite</button>
-                {% else %}
-                <input type="hidden" name="type" value="af">
-                
-                <button type="submit" class="btn btn-light">Add To Favorites</button>
-                {% endif %}
-              </form>
-            </div>
-            <div class="col-2">
-              <form action="{% url 'show_create' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="show_id" value="{{show.id}}">
-                <input type="hidden" name="title" value="{{show.title}}">
-                <input type="hidden" name="description" value="{{show.description}}">
-                <input type="hidden" name="genre" value="{{show.genre}}">
-                <input type="hidden" name="type" value="{{show.title}}">
-                {% comment %}   
-                add dropdown input select to choose rating  
-                {% endcomment %}
-                <button type="submit" class="btn btn-light">Rate Series</button>
-              </form>
-            </div>
-          </div>
-          <hr/>
+          </div><!-- End Gallery Item -->
           {% endfor %}
+          
+
         </div>
+
+      </div>
+    </section><!-- End Gallery Section -->
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="container">
+      <div class="copyright">
+        &copy; Copyright <strong><span>Binge Buddy</span></strong>. All Rights Reserved
+      </div>
+      <div class="credits">
+        <!-- All the links in the footer should remain intact. -->
+        <!-- You can delete the links only if you purchased the pro version. -->
+        <!-- Licensing information: https://bootstrapmade.com/license/ -->
+        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/photofolio-bootstrap-photography-website-template/ -->
+        Built with <a href="https://bootstrapmade.com/">BootstrapMade</a>
       </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
-  </body>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <div id="preloader">
+    <div class="line"></div>
+  </div>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'assets/js/main.js' %}"></script>
+
+</body>
+
 </html>
-
-
-
-
-

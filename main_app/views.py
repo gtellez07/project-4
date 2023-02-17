@@ -14,6 +14,7 @@ from rest_framework import serializers
 from .models import Show, Series
 from .forms import CreateUserForm, LoginUserForm
 from pprint import pprint
+import json
 
 api_key = '3d62d502968b0ef09de0fdbdfd9d6795'
 
@@ -34,6 +35,18 @@ def register(request):
 def signout(request):
     logout(request)
     return redirect('login')
+
+
+
+def ajax_post_view(request):
+    data_from_post = json.load(request)['post_data'] #Get data from POST request
+    #Do something with the data from the POST request
+    #If sending data back to the view, create the data dictionary
+    data = {
+        'my_data':data_to_display,
+    }
+    return JsonResponse(data)
+
     
 ### Login form for users to login to their account
 class LoginView(View):
@@ -64,69 +77,118 @@ def home(request):
     return render(request, 'home.html')
 
 ### I DONT THINK I NEED THIS...???🤔🤔🤔🤔
-def show_create(request):
-    if request.method == 'POST':
-        form = ShowForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('show_list')
-    else:
-        form = ShowForm()
-    return render(request, 'show_create.html', {'form': form})
+# def show_create(request):
+#     if request.method == 'POST':
+#         form = ShowForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('show_list')
+#     else:
+#         form = ShowForm()
+#     return render(request, 'show_create.html', {'form': form})
 
-### DO I NEED THE GET HERE??🤔🤔🤔🤔 its creating a return to the show_create.html, and i dont think that template is relevant
 class ShowCreateView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'show_create.html')
 
     def post(self, request, *args, **kwargs):
         show_id = request.POST.get('show_id')
-        exists = 0
         
         title = request.POST.get('title')
         genre = request.POST.get('genre')
         description = request.POST.get('description')
         type = request.POST.get('type')
-        watched = 0
-        favorite = 0
+        watched = request.POST.get('watched')
+        favorite = request.POST.get('favorite')
+        rating = request.POST.get('rating')
+        sid = request.POST.get('sid')
+        print("rating")
+        print(sid)
 
-        if type == "ab":
-            watched = 0
-        elif type == "rb":
-            watched = 1
-        elif type == "af":
-            favorite = 1
-        elif type == "rf":
-            favorite = 0
-        else:
-            watched = 0
-            favorite = 0
-
-        if exists:
-            series = Series.series.get(show_id = show_id)
-            series.watched = watched
-            series.favorite = favorite
-            series.save()
-        else:        
-            series = Series.series.create(
+        if sid == 0:
+            # create new record
+            obj = Series.series.create(
                 show_id = show_id,
                 user_id = request.user.id,
                 review = 0,
                 title=title,
                 genre=genre,
                 description=description,
-                watched = watched,
-                favorite = favorite
+                watched=watched,
+                favorite=favorite,
+            )
+        elif sid == None:
+            show = Series.series.filter(show_id=show_id, user_id=request.user.id)
+            count = show.count()
+            if count > 0:
+                first = show.first()
+                obj = Series.series.filter(id=first.id).update(
+                    show_id = show_id,
+                    user_id = request.user.id,
+                    review = 0,
+                    title=title,
+                    genre=genre,
+                    description=description,
+                    watched=watched,
+                    favorite=favorite,
+                )
+            else:
+                obj = Series.series.create(
+                    show_id = show_id,
+                    user_id = request.user.id,
+                    review = 0,
+                    title=title,
+                    genre=genre,
+                    description=description,
+                    watched=watched,
+                    favorite=favorite,
+                )
+        else:
+            # update existing record 
+            obj = Series.series.filter(id=sid).update(
+                show_id = show_id,
+                user_id = request.user.id,
+                review = 0,
+                title=title,
+                genre=genre,
+                description=description,
+                watched=watched,
+                favorite=favorite,
             )
 
-        return redirect('home')
+        response = redirect('/')
+        return response
  
-#### DO I NEED THE GET HERE??🤔🤔🤔🤔 its creating a return to the show_update.html, i dont think that template is relevant
-class ShowUpdateView(View):
+class ShowDetailView(View):
     def get(self, request, *args, **kwargs):
         tv_id = kwargs.get('tv_pk')
-        show = Show.objects.get(id=tv_id)
-        return render(request, 'show_update.html', {'show': show})
+        media_type = kwargs.get('media_type')
+        url = f'https://api.themoviedb.org/3/{media_type}/{tv_id}?api_key={api_key}&language=en-US&page=1'
+        response = requests.get(url)
+        image_base_url = 'https://image.tmdb.org/t/p/w500'
+        data = response.json()
+        print("data")
+        pprint(data.get('title'))
+       
+        show = Series.series.filter(show_id=tv_id, user_id=request.user.id)
+        count = show.count()
+        
+        if count > 0:
+            series = show.first()
+            watched = series.watched
+            favorite = series.favorite
+            sid = series.id
+        else:
+            sid = 0
+            watched = False
+            favorite = False
+        print('favorite')
+        print(favorite)
+        
+        # print("series")
+        # print(series.favorite)
+        #photo of movie, description, a box for commenting, select for rating, select for watched, select for favorite
+        return render(request, 'show_details.html', {'show': data, 'watched': watched, 'favorite': favorite, 'sid': sid})
 
     def post(self, request, *args, **kwargs):
         tv_id = kwargs.get('tv_pk')
@@ -155,7 +217,7 @@ class ShowDeleteView(View):
 
 class ShowList(View):
     def get(self, request, *args, **kwargs):
-        url = f'https://api.themoviedb.org/3/tv/popular?api_key={api_key}&language=en-US&page=1'
+        url = f'https://api.themoviedb.org/3/trending/all/week?api_key={api_key}&language=en-US&page=1'
         response = requests.get(url)
         image_base_url = 'https://image.tmdb.org/t/p/w500'
         data = response.json()
@@ -179,22 +241,26 @@ class ShowList(View):
                 wids.append(x.show_id)
 
 
-        print("fids")
-        print(fids)
+        # print("data")
+        # pprint(data['results'])
         for item in data['results']:
             if item['id'] in wids:
                 is_watched = 1
-                print(item["name"])
+                # print(item["title"])
             else:
                 is_watched = 0
 
             if item['id'] in fids:
                 is_fave = 1
-                print(item["name"])
+                # print(item["title"])
             else:
                 is_fave = 0
+                print('item')
+                print(item.get('original_title'))
+                print("The variable, name is of type:", type(item))
 
-            dd = {'title': item['name'], 'is_fave': is_fave, 'is_watched': is_watched, 'id': item['id'], 'description': item['overview'], 'vote_average': item['vote_average'], 'poster': image_base_url + item['poster_path'], 'date': item['first_air_date']}
+
+            dd = {'title': item.get('original_title'), 'is_fave': is_fave, 'is_watched': is_watched, 'id': item.get('id'), 'description': item.get('overview'), 'vote_average': item.get('vote_average'), 'poster': image_base_url + item.get('poster_path'), 'date': item.get('release_date'), 'media_type': item.get('media_type')}
             new_data.append(dd)
 
 

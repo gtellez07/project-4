@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Binge Buddy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <nav class="navbar navbar-expand-lg bg-light">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="/">Binge Buddy</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse float-end" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                  </li>
+                  {% if request.user.is_authenticated == True %}
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">My Series</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Account</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/signout">Logout</a>
+                  </li>
+                  {% else %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="/login">Login</a>
+                  </li>
+                  
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <h1>Find your next binge-worthy series</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <form action="" method="get">
+            <div class="form-group">
+              <label for="search">Search</label>
+              <input type="text" class="form-control" id="search" name="search" placeholder="Search for a series">
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <hr/>
+          {% for show in data %}
+          <h2>{{ show.name }}</h2>
+          <p>{{ show.overview }}</p>
+          <p>Vote Average: {{ show.is_fave }}</p>
+          {% if show.poster %}
+          <img src="https://image.tmdb.org/t/p/w500{{ show.poster }}" alt="{{ show.name }} Poster">
+          {% endif %}
+          <div class="row pt-3">
+            <div class="col-2">
+              <form action="{% url 'show_create' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="show_id" value="{{show.id}}">
+                <input type="hidden" name="title" value="{{show.title}}">
+                <input type="hidden" name="description" value="{{show.description}}">
+                <input type="hidden" name="genre" value="{{show.genre}}">
+                <input type="hidden" name="favorite" value="{{show.is_fave}}">
+                {% if show.is_watched == 1 %}
+                <input type="hidden" name="watched" value="0">
+                
+                <button type="submit" class="btn btn-light">Remove Series</button>
+                {% else %}
+                <input type="hidden" name="watched" value="1">
+                
+                <button type="submit" class="btn btn-light">Add To Binge List</button>
+                {% endif %}
+              </form>
+            </div>
+            <div class="col-2">
+              <form action="{% url 'show_create' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="show_id" value="{{show.id}}">
+                <input type="hidden" name="title" value="{{show.title}}">
+                <input type="hidden" name="description" value="{{show.description}}">
+                <input type="hidden" name="genre" value="{{show.genre}}">
+                <input type="hidden" name="watched" value="{{show.is_watched}}">
+                {% if show.is_fave == 1 %}
+                <input type="hidden" name="favorite" value="0">
+                
+                <button type="submit" class="btn btn-light">Remove Favorite</button>
+                {% else %}
+                <input type="hidden" name="favorite" value="1">
+                
+                <button type="submit" class="btn btn-light">Add To Favorites</button>
+                {% endif %}
+              </form>
+            </div>
+            <div class="col-2">
+              <a href="{% url 'show_detail' show.id show.media_type %}"><button type="button" class="btn btn-light">More Info</button></a>
+            </div>
+            {% comment %} <div class="col-2">
+              <form action="{% url 'show_create' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="show_id" value="{{show.id}}">
+                <input type="hidden" name="title" value="{{show.title}}">
+                <input type="hidden" name="description" value="{{show.description}}">
+                <input type="hidden" name="genre" value="{{show.genre}}">
+                <input type="hidden" name="type" value="{{show.title}}">
+                <input type="hidden" name="watched" value="{{show.is_watched}}">
+                <input type="hidden" name="favorite" value="{{show.is_fave}}">
+                <select class="form-select" name="rating" aria-label="Default select example">
+                  <option selected>Open this select menu</option>
+                  <option value="1">One</option>
+                  <option value="2">Two</option>
+                  <option value="3">Three</option>
+                </select>
+                <button type="submit" class="btn btn-light">Rate Series</button>
+              </form>
+            </div> {% endcomment %}
+          </div>
+          <hr/>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+  </body>
+</html>
+
+
+
+
+
